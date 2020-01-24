@@ -1,0 +1,58 @@
+﻿@using CBD2303.Models;
+@model UserStatuses
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="text-center">
+    <h1>@Model.user.FullName</h1>
+
+    <p>@Model.user.Email    |    DOB: @Model.user.DOB.ToShortDateString()    |    @Model.user.Country</p>
+    <input hidden id="hiddenUserID" value=@Model.user.UserId />
+
+</div>
+<br />
+@if (Model.UserStatusesList != null)
+{
+    @foreach (var status in Model.UserStatusesList)
+    {
+        <div class="row">
+            <textarea id="@("myStatusText" + status.StatusId)" placeholder="Type something and click on post button. " class="col m6">@status.StatusText</textarea>
+            <button id="updateStatusButton" class="statusPostButton" data-statusID=@status.StatusId onclick="editStatus()">
+                Update
+            </button>
+            <button id="updateStatusButton" class="statusPostButton" data-statusID=@status.StatusId onclick="deleteStatus()">
+                Delete
+            </button>
+            <div>
+                @status.LikeDetails.Count Likes!
+            </div>
+        </div>
+    }
+}
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script>$(document).ready(function () {
+        $("#nav-link-home").attr("href", "/Home/Index/" + document.getElementById("hiddenUserID").value)
+    });
+    const uri = '/Home';
+
+    function editStatus() {
+        var statusID = event.target.getAttribute("data-statusID");
+        var userID = document.getElementById("hiddenUserID").value;
+        var status = document.getElementById("myStatusText" + statusID).value;
+        fetch(`${uri}/EditStatusByID/?statusID=${statusID}&userID=${userID}&statusText=${status}`, {
+            method: 'POST'
+        })
+            .then(window.location.reload())
+            .catch(error => console.error('Unable to update item.', error));
+    }
+
+    function deleteStatus() {
+        var statusID = event.target.getAttribute("data-statusID");
+        fetch(`${uri}/DeleteStatusByID/?statusID=${statusID}`, {
+            method: 'POST'
+        }).then(window.location.reload())
+            .catch(error => console.error('Unable to update item.', error));
+    }</script>

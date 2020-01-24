@@ -1,8 +1,79 @@
-﻿@{
+﻿@using CBD2303.Models;
+@model UserStatuses
+
+@{
     ViewData["Title"] = "Home Page";
+    
 }
+<head>
+    <link rel="stylesheet" href="~/css/index.css">
+</head>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <input hidden id="hiddenUserID" value=@Model.user.UserId />
 </div>
+<br />
+<div class="row">
+    <textarea id="statusPostTextArea" placeholder="Type something and click on post button. " class="col m6"></textarea>
+    <button id="statusPostBtn" class="statusPostButton" onclick="postStatus()">
+        Post
+    </button>
+</div>
+<div>
+    @if (Model.UserStatusesList != null)
+    {
+        @foreach (var status in Model.UserStatusesList)
+        {
+            <div class="row">
+                <textarea id="myStatusTextArea" placeholder="Type something and click on post button. " class="col m6">@status.StatusText</textarea>
+                @if (status.LikeDetails.Count != 0)
+                {
+                    <button id="dislikeStatusBtn" class="statusPostButton" data-likeID="@status.LikeDetails.FirstOrDefault().LikeId" onclick="dislikeStatus()">
+                        Dislike
+                    </button>
+                }
+                else
+                {
+                    <button id="likeStatusBtn" class="statusPostButton" data-statusID="@status.StatusId" onclick="likeStatus()">
+                        Like
+                    </button>
+                }
+            </div>
+        }
+    }
+
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    const uri = '/Home';
+    $(document).ready(function () {
+        $("#nav-link-profile").attr("href", "/Home/Profile/" + document.getElementById("hiddenUserID").value)
+    });
+    function postStatus() {
+        var id = document.getElementById("hiddenUserID").value;
+        var status = document.getElementById("statusPostTextArea").value;
+        fetch(`${uri}/PostStatus/?userID=${id}&statusText=${status}`, {
+            method: 'POST'
+        })
+            .then(window.location.reload())
+            .catch(error => console.error('Unable to post item.', error));
+    }
+    function likeStatus() {
+        var id = document.getElementById("hiddenUserID").value;
+        var statusId = event.target.getAttribute("data-statusID");
+        fetch(`${uri}/LikeStatusByID/?userID=${id}&statusID=${statusId}`, {
+            method: 'POST'
+        })
+            .then(window.location.reload())
+            .catch(error => console.error('Unable to post item.', error));
+    }
+    function dislikeStatus() {
+        var likeId = event.target.getAttribute("data-likeID");
+        fetch(`${uri}/DislikeStatusByID/?likeID=${likeId}`, {
+            method: 'POST'
+        })
+            .then(window.location.reload())
+            .catch(error => console.error('Unable to post item.', error));
+    }
+</script>

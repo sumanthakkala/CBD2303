@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore;
+using CBD2303.Models;
 
 namespace CBD2303
 {
@@ -23,6 +26,9 @@ namespace CBD2303
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddTransient<MySqlDatabase>(_ => new MySqlDatabase("server=localhost; database=CBD2303FinalProject; uid=sumanthdev; pwd=oneplus500;"));
+            services.AddMvc();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllersWithViews();
         }
 
@@ -51,6 +57,9 @@ namespace CBD2303
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "api",
+                    pattern: "api/{controller}/{action}/{id?}");
             });
         }
     }

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 namespace CBD2303.Models
 {
     public class Likes
     {
-        public long LikeID { get; set; }
+        [Key]
+        public long LikeId { get; set; }
         public long StatusID { get; set; }
         public long UserID { get; set; }
     }
